@@ -11,15 +11,15 @@ const kAiBrowIconPath = [
 const kGithubUrl = `https://github.com/axonzeta/aibrow-demos/blob/main/${window.location.pathname.replace(/^\/|\/$/g, '')}/index.html`
 
 const kModels = [
-  ['phi-3-5-mini-instruct-q4-k-m', 'AiBrow Phi 3.5 Mini Instruct Q4_K_M'],
-  ['qwen2-5-1-5b-instruct-q4-k-m', 'AiBrow Qwen2.5 1.5b Instruct Q4_K_M'],
-  ['gemma-2-2b-instruct-q4-k-m', 'AiBrow Gemma 2 2b Instruct Q4_K_M'],
-  ['gemma-2b-instruct-q4-k-m', 'AiBrow Gemma 2b Instruct Q4_K_M'],
-  ['qwen2-5-coder-1-5b-instruct-q4-k-m', 'AiBrow Qwen2.5 Coder 1.5B Instruct Q4_K_M'],
-  ['llama-3-2-1b-instruct-q4-k-m', 'AiBrow Llama 3.2 1B Instruct Q4_K_M'],
-  ['llama-3-2-3b-instruct-q4-k-m', 'AiBrow Llama 3.2 3B Instruct Q4_K_M'],
-  ['smollm2-360m-instruct-q4-k-m', 'AiBrow SmolLM2 360M Instruct Q4_K_M'],
-  ['smollm2-1-7b-instruct-q4-k-m', 'AiBrow SmolLM2 1.7B Instruct Q4_K_M']
+  ['phi-3-5-mini-instruct-q4-k-m', 'AiBrow Phi 3.5 Mini Instruct'],
+  ['qwen2-5-1-5b-instruct-q4-k-m', 'AiBrow Qwen2.5 1.5b Instruct'],
+  ['gemma-2-2b-instruct-q4-k-m', 'AiBrow Gemma 2 2b Instruct'],
+  ['gemma-2b-instruct-q4-k-m', 'AiBrow Gemma 2b Instruct'],
+  ['qwen2-5-coder-1-5b-instruct-q4-k-m', 'AiBrow Qwen2.5 Coder 1.5B Instruct'],
+  ['llama-3-2-1b-instruct-q4-k-m', 'AiBrow Llama 3.2 1B Instruct'],
+  ['llama-3-2-3b-instruct-q4-k-m', 'AiBrow Llama 3.2 3B Instruct'],
+  ['smollm2-360m-instruct-q4-k-m', 'AiBrow SmolLM2 360M Instruct'],
+  ['smollm2-1-7b-instruct-q4-k-m', 'AiBrow SmolLM2 1.7B Instruct']
 ]
 
 window.aibrowDemo = {
