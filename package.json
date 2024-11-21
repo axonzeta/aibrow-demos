@@ -1,0 +1,19 @@
+{
+  "name": "aibrow-demos",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axonzeta/aibrow-demos.git"
+  },
+  "author": "Thomas Beverley <tom@axonzeta.ai>",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/axonzeta/aibrow-demos/issues"
+  },
+  "homepage": "https://github.com/axonzeta/aibrow-demos#readme",
+  "description": ""
+}

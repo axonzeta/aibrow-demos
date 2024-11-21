@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="demo-spec" content="supportsBrowserAI=false" />
+  <title>CoreModel: Spreadsheet autofill</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="../aibrow-demo-page.js" defer></script>
+</head>
+
+<body class="min-h-screen">
+  <template data-demo="info">
+    <p>
+      Populate a spreadsheet by using local AI to automatically fill the cells with data from some text
+    </p>
+    <p>
+      This demo uses the Grammar field of the coreModel API to define the shape of the output data we want, this
+      guarantees that the data extracted from the text will be in the correct format and JSON parsable.
+    </p>
+  </template>
+
+  <div data-demo="main" class="bg-gray-100 pt-6 px-3">
+    <div class="grid grid-cols-1 gap-4">
+      <div class="rounded-lg bg-gray-50 shadow p-3">
+        <form id="input-form">
+          <div class="col-span-full">
+            <label for="input" class="block text-sm/6 font-medium text-gray-900">Input</label>
+            <p class="mt-3 text-sm/6 text-gray-600">Paste some free text that includes some information about someone.</p>
+            <div class="mt-2">
+              <textarea id="input" rows="10" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6">
+              </textarea>
+            </div>
+          </div>
+          <div class="mt-6 flex items-center justify-end gap-x-6">
+            <button type="submit" class="rounded-md bg-amber-400 px-3 py-2 text-sm text-black shadow-sm hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600">Add</button>
+          </div>
+        </form>
+      </div>
+      <div class="rounded-lg bg-gray-50 shadow">
+        <table class="table-auto w-full">
+          <thead>
+            <tr class="border-b text-gray-900 text-left bg-gray-100">
+              <th class="pt-2 pl-2">First name</th>
+              <th class="pt-2">Last name</th>
+              <th class="pt-2">Address</th>
+              <th class="pt-2">ZIP code</th>
+              <th class="pt-2">Telephone</th>
+              <th class="pt-2 pr-2">Email</th>
+            </tr>
+          </thead>
+          <tbody id="spreadsheet-body">
+            <tr class="border-b">
+              <td class="pl-2">John</td>
+              <td>Doe</td>
+              <td>4 house lane, New York</td>
+              <td>90210</td>
+              <td>01243234123</td>
+              <td class="pr-2">john@email.com</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    document.getElementById('input').value = `
+Dear Sir/Madam,
+
+I hope this message finds you well. My name is Alan Davies, and I am reaching out to introduce my web development services that can help elevate your business's online presence.
+
+In today's digital age, a robust and user-friendly website is crucial for any business looking to stand out and succeed. I specialize in creating custom, responsive, and aesthetically pleasing websites tailored to meet your specific business needs and goals. Whether you're looking to revamp your existing website or build a new one from scratch, I am here to help.
+
+What I Offer:
+* Custom Web Design: Tailored layouts that reflect your brand image
+* Responsive Design: Ensures your website looks great on all devices
+* E-commerce Solutions: Seamless online shopping experiences
+* SEO Optimization: Enhance your visibility on search engines
+* Ongoing Support & Maintenance: Reliable, ongoing services to keep your website running smoothly.
+* I would love the opportunity to discuss how I can contribute to your business's success by creating or improving your online presence.
+
+Please feel free to contact me at alan@aibrow.ai or (555) 555-1234 to arrange a convenient time for a consultation.
+
+Thank you for considering my services. I look forward to the possibility of working together to achieve your online goals.
+
+Warm regards,
+
+Alan,
+
+AiBrow email corp
+132 My Street, Kingston, New York 12401
+`.trim()
+
+    const $inputForm = document.getElementById('input-form')
+    $inputForm.addEventListener('submit', async (evt) => {
+      evt.preventDefault()
+
+      for (const $el of $inputForm.querySelectorAll('textarea, button')) {
+        $el.setAttribute('disabled', 'disabled')
+        $el.classList.add('cursor-not-allowed', 'opacity-50')
+      }
+
+      const input = document.getElementById('input').value
+      const model = await window.aibrow.coreModel.create({
+        // Use grammar to define the shape of the ouput data we want
+        grammar: {
+          type: 'object',
+          properties: {
+            first_name: { type: 'string' },
+            last_name: { type: 'string' },
+            address: { type: 'string' },
+            zip_code: { type: 'string' },
+            telephone: { type: 'string' },
+            email: { type: 'string' }
+          },
+          required: ['first_name', 'last_name', 'address', 'zip_code', 'telephone', 'email'],
+          additionalProperties: false
+        },
+        model: window.aibrowDemo.props.aibrowModel
+      })
+
+      // Extract the data
+      const dataStr = await model.prompt(`Extract the data from the following: ${input}`)
+      const data = JSON.parse(dataStr)
+
+      // Make a copy of the table entry and fill it with the extracted data
+      const $spreasheetBody = document.getElementById('spreadsheet-body')
+      const row = $spreasheetBody.children[0].cloneNode(true)
+      row.children[0].textContent = data.first_name
+      row.children[1].textContent = data.last_name
+      row.children[2].textContent = data.address
+      row.children[3].textContent = data.zip_code
+      row.children[4].textContent = data.telephone
+      row.children[5].textContent = data.email
+      $spreasheetBody.appendChild(row)
+
+      for (const $el of $inputForm.querySelectorAll('textarea, button')) {
+        $el.removeAttribute('disabled')
+        $el.classList.remove('cursor-not-allowed', 'opacity-50')
+      }
+    })
+  </script>
+</body>
+
+</html>

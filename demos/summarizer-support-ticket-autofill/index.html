@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Summarizer: Support ticket autofill</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="../aibrow-demo-page.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+  <template data-demo="info">
+    <p>
+      Users submitting support tickets often fill the subject field with something unhelpful, such as "Help" or "Question".
+      Before submitting the ticket, use on device local AI to automatically generate the subject field from the ticket content.
+    </p>
+    <p>
+      This demo uses the summarizer API to generate the subject, which works for the majority of the time, however it sometimes
+      generates subject lines that are too long, or too "headliney". This could be improved using the language model API and a custom prompt.
+    </p>
+  </template>
+
+  <div data-demo="main" class="bg-gray-100 pt-6">
+    <div class="flex items-center justify-center">
+      <div class="w-[400px] bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="bg-[#7c4dff] p-6">
+          <h1 class="text-2xl text-white">Welcome to Support</h1>
+        </div>
+        <div class="p-6">
+          <h2 class="text-xl font-semibold mb-4">Contact us</h2>
+          <form>
+            <div class="mb-4">
+              <label class="block text-gray-700">Your email address <span class="text-red-500">*</span></label>
+              <input type="email" value="user@email.com" class="w-full mt-1 p-2 border border-gray-300 rounded-md cursor-not-allowed" readonly>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700">How can we help? <span class="text-red-500">*</span></label>
+              <textarea class="w-full mt-1 p-2 border border-gray-300 rounded-md" rows="4" id="message">The dress doesn't fit, and I don't have the receipt. How can I return it?</textarea>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700">Subject</label>
+              <div class="relative rounded-md">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <span class="size-5 text-white rounded bg-amber-500 text-sm text-center" data-slot="icon">
+                    AI
+                  </span>
+                </div>
+                <input type="text" id="subject" class="block w-full rounded-md border border-gray-300 p-2 pl-10 text-gray-900 placeholder:text-gray-400" readonly>
+              </div>
+            </div>
+            <button type="button" class="w-full py-2 bg-[#7c4dff] text-white rounded-md hover:bg-[#5d9cec] transition-colors">Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    const ai = window.aibrowDemo.props.browserAI ? window.ai : window.aibrow
+    let abortController = new AbortController()
+    let waiter = null
+
+    async function generateSubject (input) {
+      try {
+        abortController.abort()
+        abortController = new AbortController()
+
+        const summarizer = await ai.summarizer.create({
+          type: 'headline',
+          length: 'short',
+          sharedContext: 'Customize your output, so it sounds like a subject line for a support ticket.',
+          model: window.aibrowDemo.props.aibrowModel,
+          signal: abortController.signal
+        })
+        const stream = await summarizer.summarizeStreaming(input, { signal: abortController.signal })
+        for await (const chunk of stream) {
+          document.getElementById('subject').value = chunk
+        }
+      } catch (ex) {
+        if (!ex.message.includes('Aborted')) {
+          throw new Error(ex)
+        }
+      }
+    }
+
+    document.getElementById('message').addEventListener('input', async (evt) => {
+      const input = evt.target.value
+      clearTimeout(waiter)
+      waiter = setTimeout(() => {
+        generateSubject(input)
+      }, 250)
+    })
+    generateSubject(document.getElementById('message').value)
+  </script>
+</body>
+
+</html>

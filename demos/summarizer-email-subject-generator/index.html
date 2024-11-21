@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Summarizer: Email subject generator</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="../aibrow-demo-page.js"></script>
+  <style>
+    #compose { font-family: 'Roboto', sans-serif; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+  <template data-demo="info">
+    <p>
+      Use on device local AI, to automatically generate the subject field from an email.
+    </p>
+    <p>
+      This demo uses the summarizer API to generate the subject, which works for the majority of the time, however it sometimes
+      generates subject lines that are too long, or too "headliney". We can improve on this in the <a href="../languagemodel-email-subject-generator">LanguageModel demo</a>
+    </p>
+  </template>
+
+  <div data-demo="main" class="bg-gray-100 pt-6">
+    <div id="compose" class="flex items-center justify-center">
+      <div class="bg-white rounded-md shadow-lg" style="width: 500px">
+        <div class="border-b p-4 flex justify-between items-center">
+          <h2 class="text-lg font-medium">New Message</h2>
+        </div>
+        <div class="">
+          <div class="border-b">
+            <input type="text" placeholder="Recipients" value="user@email.com" readonly class="w-full text-gray-700 py-2 px-4 outline-none border-none focus:ring-0 focus:ring-offset-0 cursor-not-allowed">
+            <div class="border-b"></div>
+            <input type="text" id="subject" placeholder="Subject" class="w-full text-gray-700 py-2 px-4 outline-none border-none focus:ring-0 focus:ring-offset-0">
+          </div>
+          <textarea id="message" class="h-96 w-full outline-none px-4 py-2 resize-none outline-none border-none focus:ring-0 focus:ring-offset-0" placeholder="Compose your email...">Hello, I hope you are doing well. I am writing to inform you that the project is going well and we are on track to meet the deadline. Please let me know if you have any questions or concerns. Thank you.</textarea>
+        </div>
+        <div class="border-t p-4 flex items-center justify-between">
+          <div class="flex space-x-2">
+            <button class="bg-blue-600 text-white rounded-full px-4 py-2">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    const ai = window.aibrowDemo.props.browserAI ? window.ai : window.aibrow
+    let abortController = new AbortController()
+    let waiter = null
+
+    async function generateSubject (input) {
+      try {
+          abortController.abort()
+          abortController = new AbortController()
+
+          const summarizer = await ai.summarizer.create({
+            type: 'headline',
+            length: 'short',
+            model: window.aibrowDemo.props.aibrowModel,
+            signal: abortController.signal
+          })
+          const stream = await summarizer.summarizeStreaming(input, { signal: abortController.signal })
+          for await (const chunk of stream) {
+            document.getElementById('subject').value = chunk
+          }
+        } catch (ex) {
+          if (!ex.message.includes('Aborted')) {
+            throw new Error(ex)
+          }
+        }
+    }
+
+    document.getElementById('message').addEventListener('input', async (evt) => {
+      const input = evt.target.value
+      clearTimeout(waiter)
+      waiter = setTimeout(() => {
+        generateSubject(input)
+      }, 250)
+    })
+    generateSubject(document.getElementById('message').value)
+  </script>
+</body>
+
+</html>
