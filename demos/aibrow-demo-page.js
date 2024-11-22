@@ -184,7 +184,7 @@ function renderUI () {
         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
       </svg>
     </span>
-    <a href="https://demo.aibrow.ai" class="flex items-center space-x-2">
+    <a href="https://aibrow.ai/demo.html" class="flex items-center space-x-2">
       <img src="${kAiBrowIconPath}" alt="Logo" class="w-8 h-8">
       <span class="text-lg font-semibold">AiBrow Demos</span>
     </a>
