@@ -20,13 +20,13 @@
     </p>
     <p>
       This demo uses the Language Model API to generate the subject and asks the device AI to specifically generate
-      and email subject using the system prompt, which can work better than using the <a href="../summarizer-email-subject-generator">summarizer api</a>
+      and email subject using the system prompt, which is intersting to contrast with using the <a href="../summarizer-email-subject-generator">summarizer api</a>
     </p>
   </template>
 
   <div data-demo="main" class="bg-gray-100 pt-6">
     <div id="compose" class="flex items-center justify-center">
-      <div class="bg-white rounded-md shadow-lg" style="width: 500px">
+      <div class="bg-white rounded-md shadow-lg" style="width: 550px">
         <div class="border-b p-4 flex justify-between items-center">
           <h2 class="text-lg font-medium">New Message</h2>
         </div>
@@ -36,7 +36,12 @@
             <div class="border-b"></div>
             <input type="text" id="subject" placeholder="Subject" class="w-full text-gray-700 py-2 px-4 outline-none border-none focus:ring-0 focus:ring-offset-0">
           </div>
-          <textarea id="message" class="h-96 w-full outline-none px-4 py-2 resize-none outline-none border-none focus:ring-0 focus:ring-offset-0" placeholder="Compose your email...">Hello, I hope you are doing well. I am writing to inform you that the project is going well and we are on track to meet the deadline. Please let me know if you have any questions or concerns. Thank you.</textarea>
+          <textarea id="message" class="h-96 w-full outline-none px-4 py-2 resize-none outline-none border-none focus:ring-0 focus:ring-offset-0" placeholder="Compose your email...">Hello, I hope you are doing well.
+
+I am writing to inform you that the project is going well and we are on track to meet the deadline. Please let me know if you have any questions or concerns.
+
+Thank you.
+	  </textarea>
         </div>
         <div class="border-t p-4 flex items-center justify-between">
           <div class="flex space-x-2">
