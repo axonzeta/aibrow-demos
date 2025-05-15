@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="demo-spec" content="supportsBrowserAI=false" />
   <title>CoreModel: Spreadsheet autofill</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <script src="../aibrow-demo-page.js" defer></script>
@@ -91,7 +90,7 @@ Alan,
 
 MyDemoCorp
 132 My Street, Kingston, New York 12401
-    
+
 `.trim()
 
     const $inputForm = document.getElementById('input-form')
@@ -103,10 +102,16 @@ MyDemoCorp
         $el.classList.add('cursor-not-allowed', 'opacity-50')
       }
 
+      const LanguageModel = window.aibrowDemo.props.browserAI ? window.LanguageModel : window.aibrow.LanguageModel
       const input = document.getElementById('input').value
-      const model = await window.aibrow.coreModel.create({
+      const model = await LanguageModel.create({
+        model: window.aibrowDemo.props.aibrowModel
+      })
+
+      // Extract the data
+      const dataStr = await model.prompt(`Extract the data from the following: ${input}`, {
         // Use grammar to define the shape of the ouput data we want
-        grammar: {
+        responseConstraint: {
           type: 'object',
           properties: {
             first_name: { type: 'string' },
@@ -118,12 +123,8 @@ MyDemoCorp
           },
           required: ['first_name', 'last_name', 'address', 'zip_code', 'telephone', 'email'],
           additionalProperties: false
-        },
-        model: window.aibrowDemo.props.aibrowModel
+        }
       })
-
-      // Extract the data
-      const dataStr = await model.prompt(`Extract the data from the following: ${input}`)
       const data = JSON.parse(dataStr)
 
       // Make a copy of the table entry and fill it with the extracted data

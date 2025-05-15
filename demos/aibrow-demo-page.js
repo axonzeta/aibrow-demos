@@ -268,13 +268,10 @@ function renderUI () {
 async function checkEnvironmentIsSetup () {
   if (window.aibrowDemo.props.browserAI) {
     if (
-      !window.ai ||
-      !window.ai.languageModel ||
-      !window.ai.summarizer ||
-      !window.ai.writer ||
-      !window.ai.rewriter ||
-      !window.ai.translator ||
-      window.ai.aibrow === true
+      !window.LanguageModel ||
+      !window.Summarizer ||
+      !window.Writer ||
+      !window.Rewriter
     ) {
       const $template = document.createElement('template')
       $template.innerHTML = `
@@ -326,7 +323,7 @@ async function checkEnvironmentIsSetup () {
       document.body.prepend($dialog)
     }
   } else {
-    if (!window.aibrow) {
+    if (!window.aibrow || !window.aibrow.LanguageModel/* v2.0.0+ */) {
       const $template = document.createElement('template')
       $template.innerHTML = `
   <div class="relative z-10" role="dialog">

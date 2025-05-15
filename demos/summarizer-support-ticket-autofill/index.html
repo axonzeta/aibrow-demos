@@ -61,7 +61,7 @@
   </div>
 
   <script type="text/javascript">
-    const ai = window.aibrowDemo.props.browserAI ? window.ai : window.aibrow
+    const Summarizer = window.aibrowDemo.props.browserAI ? window.Summarizer : window.aibrow.Summarizer
     let abortController = new AbortController()
     let waiter = null
 
@@ -70,7 +70,7 @@
         abortController.abort()
         abortController = new AbortController()
 
-        const summarizer = await ai.summarizer.create({
+        const summarizer = await Summarizer.create({
           type: 'headline',
           length: 'short',
           sharedContext: 'Customize your output, so it sounds like a subject line for a support ticket.',

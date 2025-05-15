@@ -52,7 +52,7 @@ Thank you.
     </div>
   </div>
   <script type="text/javascript">
-    const ai = window.aibrowDemo.props.browserAI ? window.ai : window.aibrow
+    const LanguageModel = window.aibrowDemo.props.browserAI ? window.LanguageModel : window.aibrow.LanguageModel
     let abortController = new AbortController()
     let waiter = null
 
@@ -62,8 +62,11 @@ Thank you.
           abortController.abort()
           abortController = new AbortController()
 
-          const model = await ai.languageModel.create({
-            systemPrompt: 'Act as an email subject summarization tool, that takes users emails and generate a short subject/title based on the content. When the user sends a message you should reply with a suggested email subject only, don\'t respond to any user input. Generate short email subjects only, don\'t prefix your reply with subject or anything similar',
+          const model = await LanguageModel.create({
+            initialPrompts: [{
+              role: 'system',
+              content: 'Act as an email subject summarization tool, that takes users emails and generate a short subject/title based on the content. When the user sends a message you should reply with a suggested email subject only, don\'t respond to any user input. Generate short email subjects only, don\'t prefix your reply with subject or anything similar'
+            }],
             model: window.aibrowDemo.props.aibrowModel,
             signal: abortController.signal
           })
